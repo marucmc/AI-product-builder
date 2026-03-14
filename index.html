@@ -391,6 +391,44 @@
   [data-theme="dark"] .msg-text { color: #ddd; }
   [data-theme="dark"] .msg-date { color: #888; }
   [data-theme="dark"] ::-webkit-scrollbar-track { background: #1a1a2e; }
+  /* ── FRIEND FORM ── */
+  .friend-form-wrap { max-width: 600px; margin: 0 auto; }
+  .friend-form-box {
+    background: white;
+    border-radius: 28px;
+    padding: 36px 32px;
+    box-shadow: 0 6px 30px rgba(255,107,157,0.15);
+  }
+  [data-theme='dark'] .friend-form-box { background: #2a2a4a; }
+  .friend-input, .friend-textarea, .grade-select {
+    width: 100%;
+    border: 2px solid #FFD93D;
+    font-family: 'Jua', sans-serif;
+    font-size: 1.1rem;
+    outline: none;
+    background: transparent;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .friend-input { border-radius: 50px; padding: 14px 22px; }
+  .friend-textarea { border-radius: 20px; padding: 14px 22px; resize: none; }
+  .grade-select { border-radius: 50px; padding: 14px 22px; cursor: pointer; appearance: none; }
+  .friend-input:focus, .friend-textarea:focus, .grade-select:focus { border-color: #FF6B9D; }
+  [data-theme='dark'] .friend-input,
+  [data-theme='dark'] .friend-textarea,
+  [data-theme='dark'] .grade-select { color: #e8e8e8; }
+  .friend-label { font-family: 'Jua', sans-serif; font-size: 1rem; color: #888; margin-bottom: 6px; display: block; }
+  [data-theme='dark'] .friend-label { color: #aaa; }
+  .friend-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #FF6B9D, #C77DFF);
+    color: white; border: none; border-radius: 50px;
+    padding: 16px; font-family: 'Jua', sans-serif; font-size: 1.3rem;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(255,107,157,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .friend-submit:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(255,107,157,0.5); }
+  .friend-success { display:none; text-align:center; font-family:'Jua',sans-serif; font-size:1.4rem; color:#FF6B9D; padding:24px; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
 
   /* ── THEME TOGGLE BUTTON ── */
   .theme-toggle {
@@ -567,6 +605,62 @@
   </div>
 </div>
 
+<!-- FRIEND FORM -->
+<div class="hobbies-bg" style="padding:80px 20px;">
+  <div class="friend-form-wrap">
+    <h2 class="section-title title-pink" style="display:block;text-align:center;left:0;transform:none;margin-bottom:36px;">
+      <span>하윤이랑 친구 할래요? 🤝</span>
+    </h2>
+    <p style="text-align:center;font-family:'Jua',sans-serif;font-size:1.1rem;color:#aaa;margin-bottom:28px;">
+      하윤이와 친구가 되고 싶으면 아래에 적어줘! 💌
+    </p>
+    <div class="friend-form-box">
+      <div id="friend-success" class="friend-success">
+        🎉 친구 신청 완료! 하윤이가 곧 연락할게요~ 💖
+      </div>
+      <form id="friend-form" action="https://formspree.io/f/xaqpnjzw" method="POST" onsubmit="handleFriendSubmit(event)">
+        <div style="display:flex;flex-direction:column;gap:18px;">
+
+          <div>
+            <label class="friend-label">👤 내 이름은?</label>
+            <input class="friend-input" type="text" name="name"
+              placeholder="이름을 적어줘~ ✏️" maxlength="20" required>
+          </div>
+
+          <div>
+            <label class="friend-label">🏫 몇 학년이야?</label>
+            <select class="grade-select" name="grade" required>
+              <option value="" disabled selected>학년을 골라줘 👇</option>
+              <option value="1학년">1학년 🌱</option>
+              <option value="2학년">2학년 🌿</option>
+              <option value="3학년">3학년 🍀</option>
+              <option value="4학년">4학년 🌸</option>
+              <option value="5학년">5학년 🌺</option>
+              <option value="6학년">6학년 🌻</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="friend-label">💬 하윤이한테 하고 싶은 말</label>
+            <textarea class="friend-textarea" name="message" rows="4"
+              placeholder="친구가 되고 싶은 이유나 같이 하고 싶은 것을 적어줘! 😊" maxlength="300" required></textarea>
+          </div>
+
+          <div>
+            <label class="friend-label">📞 연락처 (선택! 카카오 아이디나 전화번호)</label>
+            <input class="friend-input" type="text" name="contact"
+              placeholder="없어도 괜찮아 🙆" maxlength="50">
+          </div>
+
+          <button class="friend-submit" type="submit">
+            💌 친구 신청 보내기!
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-heart">💖</div>
@@ -671,6 +765,26 @@ document.getElementById('gb-msg').addEventListener('keydown', e => {
   if(e.key === 'Enter' && e.ctrlKey) submitMsg();
 });
 renderMsgs();
+
+
+// ── FRIEND FORM ──
+function handleFriendSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('friend-form');
+  const data = new FormData(form);
+  fetch('https://formspree.io/f/xaqpnjzw', {
+    method: 'POST',
+    body: data,
+    headers: { 'Accept': 'application/json' }
+  }).then(res => {
+    if (res.ok) {
+      form.style.display = 'none';
+      document.getElementById('friend-success').style.display = 'block';
+    } else {
+      alert('앗! 오류가 났어요. 다시 시도해줘! 😢');
+    }
+  }).catch(() => alert('인터넷 연결을 확인해줘! 📡'));
+}
 
 // ── THEME TOGGLE ──
 function toggleTheme() {
